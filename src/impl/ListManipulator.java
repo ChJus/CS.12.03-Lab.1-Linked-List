@@ -14,7 +14,6 @@ import java.util.ArrayList;
  * This class represents the iterative implementation of the IListManipulator interface.
  */
 public class ListManipulator implements IListManipulator {
-
   @Override
   public int size(ListNode head) {
     if (head == null) return 0;
