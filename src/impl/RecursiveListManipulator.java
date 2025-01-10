@@ -181,5 +181,4 @@ public class RecursiveListManipulator implements IListManipulator {
     // TODO Auto-generated method stub
     return null;
   }
-
 }
