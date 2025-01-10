@@ -90,17 +90,7 @@ public class ListManipulator implements IListManipulator {
 
   @Override
   public Object getFromBack(ListNode head, int n) throws InvalidIndexException {
-    if (n < 0 || head == null) throw new InvalidIndexException();
-
-    ListNode tail = head.previous;
-    ListNode currentNode = tail;
-    while (currentNode.previous != tail && n > 0) {
-      currentNode = currentNode.previous;
-      n--;
-    }
-
-    if (n != 0) throw new InvalidIndexException();
-    return currentNode.element;
+    return getFromFront(head, size(head) - n - 1);
   }
 
   @Override

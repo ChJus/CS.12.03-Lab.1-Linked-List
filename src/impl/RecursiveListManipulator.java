@@ -8,6 +8,8 @@ import interfaces.IListManipulator;
 import interfaces.IMapTransformation;
 import interfaces.IReduceOperator;
 
+import java.util.ArrayList;
+
 /**
  * This class represents the recursive implementation of the IListManipulator interface.
  */
@@ -68,38 +70,73 @@ public class RecursiveListManipulator implements IListManipulator {
 
   @Override
   public Object getFromFront(ListNode head, int n) throws InvalidIndexException {
-    // TODO Auto-generated method stub
-    return null;
+    if (n < 0 || head == null) throw new InvalidIndexException();
+    if (n == 0) return head.element;
+    return getFromFront(head.next, n - 1);
   }
 
   @Override
   public Object getFromBack(ListNode head, int n) throws InvalidIndexException {
-    // TODO Auto-generated method stub
-    return null;
+    return getFromFront(head, size(head) - n - 1);
   }
 
   @Override
-  public boolean equals(ListNode head1, ListNode head2) {
-    // TODO Auto-generated method stub
-    return false;
+  public boolean equals(ListNode firstNode, ListNode secondNode) {
+    if (firstNode == null && secondNode == null) return true;
+    if (firstNode == null || secondNode == null) return false;
+
+    ListNode firstTail = firstNode.previous;
+    ListNode secondTail = secondNode.previous;
+    firstTail.next = null;
+    secondTail.next = null;
+    boolean result = firstNode.element.equals(secondNode.element) && equals(firstNode.next, secondNode.next);
+    firstTail.next = firstNode;
+    secondTail.next = secondNode;
+
+    return result;
   }
 
   @Override
   public boolean containsDuplicates(ListNode head) {
-    // TODO Auto-generated method stub
-    return false;
+    if (head == null) return false;
+    return containsDuplicates(head, new ArrayList<>());
+  }
+
+  public boolean containsDuplicates(ListNode head, ArrayList<Object> uniqueItems) {
+    if (head == null) return false;
+    if (uniqueItems.contains(head)) return true;
+
+    ListNode node = head.previous;
+    node.next = null;
+    uniqueItems.add(head);
+    boolean result = containsDuplicates(head.next, uniqueItems);
+    node.next = head;
+    return result;
   }
 
   @Override
   public ListNode addHead(ListNode head, ListNode node) {
-    // TODO Auto-generated method stub
-    return null;
+    ListNode tail = head.previous;
+    tail.next = node;
+    node.previous = tail;
+    node.next = head;
+    head.previous = node;
+    return node;
   }
 
   @Override
-  public ListNode append(ListNode head1, ListNode head2) {
-    // TODO Auto-generated method stub
-    return null;
+  public ListNode append(ListNode firstListHead, ListNode secondListHead) {
+    if (firstListHead == null && secondListHead == null) return null;
+    if (firstListHead == null) return secondListHead;
+    if (secondListHead == null) return firstListHead;
+
+
+    firstListHead.previous.next = secondListHead;
+    secondListHead.previous.next = firstListHead;
+    secondListHead.previous = firstListHead.previous;
+    firstListHead.previous = secondListHead;
+
+    return firstListHead;
   }
 
   @Override
