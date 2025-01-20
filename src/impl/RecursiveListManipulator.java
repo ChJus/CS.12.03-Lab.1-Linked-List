@@ -70,7 +70,7 @@ public class RecursiveListManipulator implements IListManipulator {
 
   @Override
   public Object getFromFront(ListNode head, int n) throws InvalidIndexException {
-    if (n < 0 || head == null) throw new InvalidIndexException();
+    if (n < 0 || head == null || size(head) < n) throw new InvalidIndexException();
     if (n == 0) return head.element;
     return getFromFront(head.next, n - 1);
   }
@@ -130,32 +130,65 @@ public class RecursiveListManipulator implements IListManipulator {
     if (firstListHead == null) return secondListHead;
     if (secondListHead == null) return firstListHead;
 
-
-    firstListHead.previous.next = secondListHead;
-    secondListHead.previous.next = firstListHead;
-    secondListHead.previous = firstListHead.previous;
-    firstListHead.previous = secondListHead;
+    ListNode firstTail = firstListHead.previous;
+    ListNode secondTail = secondListHead.previous;
+    firstTail.next = secondListHead;
+    secondTail.next = firstListHead;
+    secondListHead.previous = firstTail;
+    firstListHead.previous = secondTail;
 
     return firstListHead;
   }
 
   @Override
   public ListNode insert(ListNode head, ListNode node, int n) throws InvalidIndexException {
-    // TODO Auto-generated method stub
-    return null;
+    if (n < 0 || n > size(head)) throw new InvalidIndexException();
+    if (n == 0) return addHead(head, node);
+    if (n == size(head)) return append(head, node);
+
+    ListNode currentNode = head;
+
+    if (n == 1) {
+      node.next = currentNode.next;
+      node.previous = currentNode;
+      currentNode.next = node;
+      return head;
+    }
+
+    currentNode = currentNode.next;
+    return insert(currentNode, node, n - 1);
   }
 
   @Override
   public ListNode delete(ListNode head, Object elem) {
-    // TODO Auto-generated method stub
-    return null;
+    if (head.element.equals(elem) && size(head) == 1) return null;
+    if (!contains(head, elem)) return head;
+
+    if (head.element.equals(elem)) {
+      ListNode tail = head.previous;
+      ListNode newHead = head.next;
+      newHead.previous = tail;
+      tail.next = newHead;
+      return newHead;
+    }
+
+    return delete(head.next, elem);
   }
 
 
   @Override
   public ListNode reverse(ListNode head) {
-    // TODO Auto-generated method stub
-    return null;
+    if (isEmpty(head) || head.next == head.previous) return head;
+
+    ListNode temp = head.next;
+    head.next = head.previous;
+    head.previous = temp;
+
+    if (head.next.next == head) {
+      return reverse(head.next);
+    }
+
+    return head.previous;
   }
 
   @Override
